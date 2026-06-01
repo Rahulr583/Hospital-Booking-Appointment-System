@@ -1,0 +1,97 @@
+<%- include('../partials/header') %>
+
+<div class="page-hero page-hero-sm">
+  <div class="container">
+    <h1>Appointments</h1>
+    <p>Manage and track all appointments</p>
+  </div>
+</div>
+
+<div class="appointments-page container">
+  <div class="appts-toolbar">
+    <% if (user.role === 'patient') { %>
+      <a href="/appointments/book" class="btn-primary-sm"><i class="fas fa-plus"></i> New Appointment</a>
+    <% } %>
+    <div class="status-filters">
+      <button class="sf-btn active" onclick="filterAppts('all')">All</button>
+      <button class="sf-btn" onclick="filterAppts('pending')">Pending</button>
+      <button class="sf-btn" onclick="filterAppts('confirmed')">Confirmed</button>
+      <button class="sf-btn" onclick="filterAppts('completed')">Completed</button>
+      <button class="sf-btn" onclick="filterAppts('cancelled')">Cancelled</button>
+    </div>
+  </div>
+
+  <% if (error && error.length > 0) { %>
+    <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error[0] %></div>
+  <% } %>
+  <% if (success && success.length > 0) { %>
+    <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= success[0] %></div>
+  <% } %>
+
+  <% if (appointments.length === 0) { %>
+    <div class="empty-state large-empty">
+      <div class="empty-icon">📅</div>
+      <h3>No appointments found</h3>
+      <% if (user.role === 'patient') { %>
+        <a href="/appointments/book" class="btn-primary-sm">Book Your First Appointment</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="appointments-grid" id="apptGrid">
+      <% appointments.forEach(appt => { %>
+      <div class="appt-card" data-status="<%= appt.status %>">
+        <div class="appt-card-header">
+          <div class="appt-card-left">
+            <div class="appt-avatar">
+              <% if (user.role === 'patient') { %>
+                <%= appt.doctor_name.split(' ')[1] ? appt.doctor_name.split(' ')[1].charAt(0) : 'D' %>
+              <% } else { %>
+                <%= appt.patient_name ? appt.patient_name.charAt(0) : 'P' %>
+              <% } %>
+            </div>
+            <div>
+              <% if (user.role === 'patient') { %>
+                <div class="appt-card-title"><%= appt.doctor_name %></div>
+                <div class="appt-card-sub"><%= appt.specialization %></div>
+              <% } else { %>
+                <div class="appt-card-title"><%= appt.patient_name %></div>
+                <div class="appt-card-sub">Patient</div>
+              <% } %>
+            </div>
+          </div>
+          <span class="status-badge status-<%= appt.status %>"><%= appt.status %></span>
+        </div>
+        <div class="appt-card-body">
+          <div class="appt-detail"><i class="fas fa-building"></i> <%= appt.department %></div>
+          <div class="appt-detail"><i class="fas fa-calendar"></i> <%= appt.appointment_date %></div>
+          <div class="appt-detail"><i class="fas fa-clock"></i> <%= appt.appointment_time %></div>
+          <% if (appt.reason) { %>
+            <div class="appt-detail reason-detail"><i class="fas fa-notes-medical"></i> <%= appt.reason.substring(0, 60) %><%= appt.reason.length > 60 ? '...' : '' %></div>
+          <% } %>
+        </div>
+        <div class="appt-card-footer">
+          <a href="/appointments/<%= appt.id %>" class="btn-appt-view">View Details</a>
+          <% if (appt.status === 'pending' && user.role === 'patient') { %>
+            <form action="/appointments/<%= appt.id %>/status" method="POST" style="display:inline" onsubmit="return confirm('Cancel this appointment?')">
+              <input type="hidden" name="status" value="cancelled">
+              <button type="submit" class="btn-appt-cancel">Cancel</button>
+            </form>
+          <% } %>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<script>
+function filterAppts(status) {
+  document.querySelectorAll('.sf-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.appt-card').forEach(card => {
+    card.style.display = (status === 'all' || card.dataset.status === status) ? 'block' : 'none';
+  });
+}
+</script>
+
+<%- include('../partials/footer') %>

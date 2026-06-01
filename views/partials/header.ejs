@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | MediCare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-brand">
+      <span class="brand-icon">⚕️</span>
+      <span class="brand-name">Medi<span class="brand-accent">Care</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link <%= currentPath === '/' ? 'active' : '' %>">Home</a>
+      <a href="/doctors" class="nav-link <%= currentPath.startsWith('/doctors') ? 'active' : '' %>">Doctors</a>
+      <% if (user) { %>
+        <a href="/appointments" class="nav-link <%= currentPath.startsWith('/appointments') ? 'active' : '' %>">Appointments</a>
+        <a href="/dashboard" class="nav-link <%= currentPath === '/dashboard' ? 'active' : '' %>">Dashboard</a>
+        <div class="nav-user">
+          <div class="user-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+          <div class="user-dropdown">
+            <div class="dropdown-info">
+              <span class="dropdown-name"><%= user.name %></span>
+              <span class="dropdown-role"><%= user.role %></span>
+            </div>
+            <a href="/profile" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+            <a href="/appointments" class="dropdown-item"><i class="fas fa-calendar"></i> My Appointments</a>
+            <div class="dropdown-divider"></div>
+            <a href="/auth/logout" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/auth/login" class="btn-nav-login">Login</a>
+        <a href="/auth/register" class="btn-nav-register">Register</a>
+      <% } %>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/" class="mobile-link">Home</a>
+    <a href="/doctors" class="mobile-link">Doctors</a>
+    <% if (user) { %>
+      <a href="/appointments" class="mobile-link">Appointments</a>
+      <a href="/dashboard" class="mobile-link">Dashboard</a>
+      <a href="/profile" class="mobile-link">Profile</a>
+      <a href="/auth/logout" class="mobile-link">Logout</a>
+    <% } else { %>
+      <a href="/auth/login" class="mobile-link">Login</a>
+      <a href="/auth/register" class="mobile-link">Register</a>
+    <% } %>
+  </div>
+</nav>

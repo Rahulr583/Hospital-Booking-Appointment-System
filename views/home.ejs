@@ -1,0 +1,190 @@
+<%- include('partials/header') %>
+
+<main>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-circle hero-circle-1"></div>
+      <div class="hero-circle hero-circle-2"></div>
+      <div class="hero-circle hero-circle-3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">🏥 Trusted Healthcare Since 1985</div>
+      <h1 class="hero-title">Your Health Is Our<br><span class="hero-gradient">Top Priority</span></h1>
+      <p class="hero-subtitle">Book appointments with India's top specialists. Fast, reliable, and compassionate healthcare at your fingertips.</p>
+      <div class="hero-actions">
+        <a href="/appointments/book" class="btn-primary-hero">
+          <i class="fas fa-calendar-plus"></i> Book Appointment
+        </a>
+        <a href="/doctors" class="btn-secondary-hero">
+          <i class="fas fa-user-md"></i> Find Doctors
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">50+</span>
+          <span class="stat-label">Specialists</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">10K+</span>
+          <span class="stat-label">Patients</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">98%</span>
+          <span class="stat-label">Satisfaction</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">24/7</span>
+          <span class="stat-label">Support</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-card floating">
+        <div class="hcard-icon">👨‍⚕️</div>
+        <div>
+          <div class="hcard-title">Dr. Available Now</div>
+          <div class="hcard-sub">15 doctors online</div>
+        </div>
+      </div>
+      <div class="hero-blob">
+        <div class="blob-inner">
+          <span class="blob-emoji">🏥</span>
+          <span class="blob-text">MediCare</span>
+        </div>
+      </div>
+      <div class="hero-card2 floating-slow">
+        <i class="fas fa-shield-alt card2-icon"></i>
+        <span>100% Secure & Private</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Search -->
+  <section class="quick-search-section">
+    <div class="container">
+      <div class="search-box">
+        <form action="/doctors" method="GET" class="search-form">
+          <div class="search-group">
+            <i class="fas fa-search search-icon-input"></i>
+            <input type="text" name="search" placeholder="Search doctors, specializations..." class="search-input-main">
+          </div>
+          <button type="submit" class="btn-search-main">Search</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Departments -->
+  <section class="section departments-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Our Services</span>
+        <h2 class="section-title">Medical Departments</h2>
+        <p class="section-subtitle">Comprehensive healthcare across all medical specialties</p>
+      </div>
+      <div class="departments-grid">
+        <% departments.forEach(dept => { %>
+        <a href="/doctors?dept=<%= dept.id %>" class="dept-card">
+          <div class="dept-icon"><%= dept.icon %></div>
+          <h3 class="dept-name"><%= dept.name %></h3>
+          <p class="dept-desc"><%= dept.description %></p>
+          <div class="dept-arrow"><i class="fas fa-arrow-right"></i></div>
+        </a>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Doctors -->
+  <section class="section doctors-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Our Experts</span>
+        <h2 class="section-title">Top Rated Doctors</h2>
+        <p class="section-subtitle">Experienced specialists dedicated to your health</p>
+      </div>
+      <div class="doctors-grid">
+        <% doctors.forEach(doc => { %>
+        <div class="doctor-card">
+          <div class="doctor-avatar">
+            <div class="avatar-circle"><%= doc.name.split(' ')[1] ? doc.name.split(' ')[1].charAt(0) : doc.name.charAt(0) %></div>
+            <div class="availability-dot"></div>
+          </div>
+          <div class="doctor-info">
+            <h3 class="doctor-name"><%= doc.name %></h3>
+            <p class="doctor-spec"><%= doc.specialization %></p>
+            <p class="doctor-dept"><%= doc.dept_icon %> <%= doc.department_name %></p>
+            <div class="doctor-meta">
+              <span class="meta-item"><i class="fas fa-star"></i> <%= doc.rating %></span>
+              <span class="meta-item"><i class="fas fa-briefcase"></i> <%= doc.experience_years %> yrs</span>
+              <span class="meta-item"><i class="fas fa-rupee-sign"></i> <%= doc.consultation_fee %></span>
+            </div>
+          </div>
+          <div class="doctor-actions">
+            <a href="/doctors/<%= doc.id %>" class="btn-view-profile">View Profile</a>
+            <a href="/appointments/book?doctor=<%= doc.id %>" class="btn-book-now">Book Now</a>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <div class="section-footer">
+        <a href="/doctors" class="btn-see-all">View All Doctors <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="section why-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Why Us</span>
+        <h2 class="section-title">Why Choose MediCare?</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">🎯</div>
+          <h3>Expert Specialists</h3>
+          <p>Board-certified doctors with years of experience in their respective fields.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">⚡</div>
+          <h3>Instant Booking</h3>
+          <p>Book appointments in minutes, with real-time availability and confirmation.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🔒</div>
+          <h3>Secure & Private</h3>
+          <p>Your health data is fully encrypted and protected with highest security standards.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">📱</div>
+          <h3>24/7 Access</h3>
+          <p>Access your health records and appointments anytime, anywhere.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-content">
+          <h2>Ready to take control of your health?</h2>
+          <p>Join thousands of patients who trust MediCare for their healthcare needs.</p>
+          <div class="cta-actions">
+            <a href="/auth/register" class="btn-cta-primary">Get Started Free</a>
+            <a href="/appointments/book" class="btn-cta-secondary">Book Appointment</a>
+          </div>
+        </div>
+        <div class="cta-decoration">🏥</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,87 @@
+<%- include('../partials/header') %>
+
+<div class="page-hero page-hero-doctors">
+  <div class="container">
+    <h1>Find Your Doctor</h1>
+    <p>Browse our team of experienced specialists</p>
+  </div>
+</div>
+
+<div class="doctors-page container-wide">
+  <aside class="filter-sidebar">
+    <div class="filter-card">
+      <h3 class="filter-title"><i class="fas fa-filter"></i> Filters</h3>
+      <form action="/doctors" method="GET">
+        <div class="filter-group">
+          <label class="filter-label">Search</label>
+          <input type="text" name="search" value="<%= search || '' %>" placeholder="Doctor or specialization..." class="filter-input">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Department</label>
+          <select name="dept" class="filter-input">
+            <option value="">All Departments</option>
+            <% departments.forEach(d => { %>
+              <option value="<%= d.id %>" <%= selectedDept == d.id ? 'selected' : '' %>><%= d.icon %> <%= d.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <button type="submit" class="btn-filter-apply">Apply Filters</button>
+        <a href="/doctors" class="btn-filter-clear">Clear All</a>
+      </form>
+    </div>
+    <div class="filter-card filter-emergency">
+      <div class="emergency-icon">🚨</div>
+      <h4>Emergency?</h4>
+      <p>Call our 24/7 helpline</p>
+      <a href="tel:18001234567" class="emergency-number">1800-123-4567</a>
+    </div>
+  </aside>
+
+  <main class="doctors-main">
+    <div class="doctors-toolbar">
+      <span class="results-count"><strong><%= doctors.length %></strong> doctors found</span>
+    </div>
+    <% if (doctors.length === 0) { %>
+      <div class="empty-state large-empty">
+        <div class="empty-icon">👨‍⚕️</div>
+        <h3>No doctors found</h3>
+        <p>Try adjusting your search filters</p>
+        <a href="/doctors" class="btn-primary-sm">Show All Doctors</a>
+      </div>
+    <% } else { %>
+      <div class="doctors-list">
+        <% doctors.forEach(doc => { %>
+        <div class="doctor-list-card">
+          <div class="dlc-avatar">
+            <%= doc.name.split(' ')[1] ? doc.name.split(' ')[1].charAt(0) : doc.name.charAt(0) %>
+            <div class="dlc-online"></div>
+          </div>
+          <div class="dlc-info">
+            <h3 class="dlc-name"><%= doc.name %></h3>
+            <p class="dlc-spec"><%= doc.specialization %></p>
+            <p class="dlc-dept"><%= doc.dept_icon %> <%= doc.department_name %></p>
+            <p class="dlc-qual"><i class="fas fa-graduation-cap"></i> <%= doc.qualification %></p>
+            <div class="dlc-tags">
+              <span class="dlc-tag"><i class="fas fa-star"></i> <%= doc.rating %> Rating</span>
+              <span class="dlc-tag"><i class="fas fa-briefcase"></i> <%= doc.experience_years %> yrs exp</span>
+              <span class="dlc-tag avail-tag"><i class="fas fa-calendar"></i> <%= doc.available_days %></span>
+            </div>
+          </div>
+          <div class="dlc-right">
+            <div class="dlc-fee">
+              <span class="fee-label">Consultation Fee</span>
+              <span class="fee-amount">₹<%= doc.consultation_fee %></span>
+            </div>
+            <div class="dlc-actions">
+              <a href="/doctors/<%= doc.id %>" class="btn-dlc-view">View Profile</a>
+              <a href="/appointments/book?doctor=<%= doc.id %>" class="btn-dlc-book">Book Now</a>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

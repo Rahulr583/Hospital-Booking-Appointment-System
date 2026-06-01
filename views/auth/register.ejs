@@ -1,0 +1,106 @@
+<%- include('../partials/header') %>
+
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <div class="auth-brand">⚕️ MediCare</div>
+      <h2>Join Our Healthcare<br>Community</h2>
+      <p>Register to get access to the best healthcare services and book appointments with top specialists.</p>
+      <div class="auth-features">
+        <div class="auth-feature"><i class="fas fa-check-circle"></i> Free Registration</div>
+        <div class="auth-feature"><i class="fas fa-check-circle"></i> Instant Access</div>
+        <div class="auth-feature"><i class="fas fa-check-circle"></i> Track Your Health</div>
+        <div class="auth-feature"><i class="fas fa-check-circle"></i> Get Reminders</div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-container">
+      <div class="auth-form-header">
+        <h1>Create Account</h1>
+        <p>Start your health journey today</p>
+      </div>
+
+      <% if (error && error.length > 0) { %>
+        <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error[0] %></div>
+      <% } %>
+      <% if (success && success.length > 0) { %>
+        <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= success[0] %></div>
+      <% } %>
+
+      <form action="/auth/register" method="POST" class="auth-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <div class="input-group">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" name="name" class="form-input" placeholder="John Doe" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <div class="input-group">
+              <i class="fas fa-phone input-icon"></i>
+              <input type="tel" name="phone" class="form-input" placeholder="+91 9876543210">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address *</label>
+          <div class="input-group">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" name="email" class="form-input" placeholder="you@example.com" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <div class="input-group">
+              <i class="fas fa-calendar input-icon"></i>
+              <input type="date" name="date_of_birth" class="form-input">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <div class="input-group">
+              <i class="fas fa-venus-mars input-icon"></i>
+              <select name="gender" class="form-input form-select">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Password *</label>
+            <div class="input-group">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" name="password" class="form-input" placeholder="Min 6 characters" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password *</label>
+            <div class="input-group">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" name="confirm_password" class="form-input" placeholder="Repeat password" required>
+            </div>
+          </div>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="agree" required>
+          <label for="agree">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+        <button type="submit" class="btn-auth-submit">
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
+      </form>
+
+      <p class="auth-switch">Already have an account? <a href="/auth/login">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

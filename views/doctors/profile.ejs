@@ -1,0 +1,58 @@
+<%- include('../partials/header') %>
+
+<div class="doctor-profile-page">
+  <div class="container">
+    <a href="/doctors" class="back-link"><i class="fas fa-arrow-left"></i> Back to Doctors</a>
+
+    <div class="doctor-profile-card">
+      <div class="dpc-header">
+        <div class="dpc-avatar">
+          <%= doctor.name.split(' ')[1] ? doctor.name.split(' ')[1].charAt(0) : doctor.name.charAt(0) %>
+        </div>
+        <div class="dpc-basic">
+          <h1 class="dpc-name"><%= doctor.name %></h1>
+          <p class="dpc-spec"><%= doctor.specialization %></p>
+          <p class="dpc-dept"><%= doctor.dept_icon %> <%= doctor.department_name %></p>
+          <div class="dpc-badges">
+            <span class="dpc-badge"><i class="fas fa-star"></i> <%= doctor.rating %> Rating</span>
+            <span class="dpc-badge"><i class="fas fa-briefcase"></i> <%= doctor.experience_years %> Years Experience</span>
+            <span class="dpc-badge"><i class="fas fa-calendar-check"></i> <%= stats ? stats.completed : 0 %> Consultations</span>
+          </div>
+        </div>
+        <div class="dpc-book-box">
+          <div class="dpc-fee-label">Consultation Fee</div>
+          <div class="dpc-fee">₹<%= doctor.consultation_fee %></div>
+          <a href="/appointments/book?doctor=<%= doctor.id %>" class="btn-book-profile">
+            <i class="fas fa-calendar-plus"></i> Book Appointment
+          </a>
+          <div class="dpc-avail-note">
+            <i class="fas fa-clock"></i> <%= doctor.available_time_start %> – <%= doctor.available_time_end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpc-body">
+        <div class="dpc-section">
+          <h3><i class="fas fa-info-circle"></i> About</h3>
+          <p><%= doctor.bio || 'No bio available.' %></p>
+        </div>
+        <div class="dpc-grid">
+          <div class="dpc-section">
+            <h3><i class="fas fa-graduation-cap"></i> Qualifications</h3>
+            <p><%= doctor.qualification %></p>
+          </div>
+          <div class="dpc-section">
+            <h3><i class="fas fa-calendar-alt"></i> Available Days</h3>
+            <div class="days-pills">
+              <% (doctor.available_days || '').split(',').forEach(day => { %>
+                <span class="day-pill"><%= day.trim() %></span>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

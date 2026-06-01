@@ -1,0 +1,10 @@
+<%- include('partials/header') %>
+<div class="error-page">
+  <div class="error-content">
+    <div class="error-code">500</div>
+    <h2>Server Error</h2>
+    <p><%= error || 'Something went wrong. Please try again.' %></p>
+    <a href="/" class="btn-primary-sm">Go Home</a>
+  </div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,261 @@
+<%- include('partials/header') %>
+
+<div class="dashboard-page">
+  <div class="dashboard-sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-name"><%= user.name %></div>
+        <div class="sidebar-role-badge sidebar-role-<%= user.role %>"><%= user.role %></div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="sidebar-link active"><i class="fas fa-th-large"></i> Dashboard</a>
+      <% if (user.role === 'patient') { %>
+        <a href="/appointments/book" class="sidebar-link"><i class="fas fa-calendar-plus"></i> Book Appointment</a>
+        <a href="/appointments" class="sidebar-link"><i class="fas fa-calendar-check"></i> My Appointments</a>
+        <a href="/doctors" class="sidebar-link"><i class="fas fa-user-md"></i> Find Doctors</a>
+      <% } else if (user.role === 'doctor') { %>
+        <a href="/appointments" class="sidebar-link"><i class="fas fa-calendar-check"></i> Appointments</a>
+      <% } else { %>
+        <a href="/appointments" class="sidebar-link"><i class="fas fa-calendar-check"></i> All Appointments</a>
+        <a href="/doctors" class="sidebar-link"><i class="fas fa-user-md"></i> Doctors</a>
+      <% } %>
+      <a href="/profile" class="sidebar-link"><i class="fas fa-user-cog"></i> Profile</a>
+      <a href="/auth/logout" class="sidebar-link sidebar-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+  </div>
+
+  <div class="dashboard-main">
+    <div class="dashboard-topbar">
+      <div>
+        <h1 class="dash-title">Dashboard</h1>
+        <p class="dash-sub">Welcome back, <%= user.name %>! 👋</p>
+      </div>
+      <% if (user.role === 'patient') { %>
+        <a href="/appointments/book" class="btn-dash-action"><i class="fas fa-plus"></i> Book Appointment</a>
+      <% } %>
+    </div>
+
+    <% if (error && error.length > 0) { %>
+      <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error[0] %></div>
+    <% } %>
+    <% if (success && success.length > 0) { %>
+      <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= success[0] %></div>
+    <% } %>
+
+    <!-- Admin Dashboard -->
+    <% if (user.role === 'admin') { %>
+      <div class="stats-grid">
+        <div class="stat-card stat-blue">
+          <div class="stat-card-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.totalPatients %></div>
+            <div class="stat-card-label">Total Patients</div>
+          </div>
+        </div>
+        <div class="stat-card stat-green">
+          <div class="stat-card-icon"><i class="fas fa-user-md"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.totalDoctors %></div>
+            <div class="stat-card-label">Total Doctors</div>
+          </div>
+        </div>
+        <div class="stat-card stat-purple">
+          <div class="stat-card-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.totalAppointments %></div>
+            <div class="stat-card-label">Total Appointments</div>
+          </div>
+        </div>
+        <div class="stat-card stat-orange">
+          <div class="stat-card-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.pendingAppointments %></div>
+            <div class="stat-card-label">Pending</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-section">
+        <div class="dash-section-header">
+          <h2>Recent Appointments</h2>
+          <a href="/appointments" class="view-all-link">View All</a>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Department</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.recentAppointments.forEach(appt => { %>
+              <tr>
+                <td><strong><%= appt.patient_name %></strong></td>
+                <td><%= appt.doctor_name %></td>
+                <td><%= appt.department %></td>
+                <td><%= appt.appointment_date %> <span class="time-badge"><%= appt.appointment_time %></span></td>
+                <td><span class="status-badge status-<%= appt.status %>"><%= appt.status %></span></td>
+                <td><a href="/appointments/<%= appt.id %>" class="table-action">View</a></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    <!-- Doctor Dashboard -->
+    <% } else if (user.role === 'doctor') { %>
+      <div class="stats-grid">
+        <div class="stat-card stat-blue">
+          <div class="stat-card-icon"><i class="fas fa-calendar"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.totalAppointments %></div>
+            <div class="stat-card-label">Total Appointments</div>
+          </div>
+        </div>
+        <div class="stat-card stat-orange">
+          <div class="stat-card-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.pendingAppointments %></div>
+            <div class="stat-card-label">Pending</div>
+          </div>
+        </div>
+        <div class="stat-card stat-green">
+          <div class="stat-card-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.completedAppointments %></div>
+            <div class="stat-card-label">Completed</div>
+          </div>
+        </div>
+        <div class="stat-card stat-purple">
+          <div class="stat-card-icon"><i class="fas fa-calendar-day"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.todayAppointments.length %></div>
+            <div class="stat-card-label">Today</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid-2">
+        <div class="dash-section">
+          <div class="dash-section-header">
+            <h2>Today's Appointments</h2>
+          </div>
+          <% if (data.todayAppointments.length === 0) { %>
+            <div class="empty-state"><i class="fas fa-calendar-times"></i><p>No appointments today</p></div>
+          <% } else { %>
+            <% data.todayAppointments.forEach(appt => { %>
+            <div class="appt-item">
+              <div class="appt-time"><%= appt.appointment_time %></div>
+              <div class="appt-info">
+                <div class="appt-patient"><%= appt.patient_name %></div>
+                <div class="appt-phone"><i class="fas fa-phone"></i> <%= appt.patient_phone || 'N/A' %></div>
+              </div>
+              <span class="status-badge status-<%= appt.status %>"><%= appt.status %></span>
+              <a href="/appointments/<%= appt.id %>" class="appt-action">→</a>
+            </div>
+            <% }) %>
+          <% } %>
+        </div>
+        <div class="dash-section">
+          <div class="dash-section-header">
+            <h2>Upcoming Appointments</h2>
+            <a href="/appointments" class="view-all-link">View All</a>
+          </div>
+          <% if (data.upcomingAppointments.length === 0) { %>
+            <div class="empty-state"><i class="fas fa-calendar"></i><p>No upcoming appointments</p></div>
+          <% } else { %>
+            <% data.upcomingAppointments.forEach(appt => { %>
+            <div class="appt-item">
+              <div class="appt-time"><%= appt.appointment_date %></div>
+              <div class="appt-info">
+                <div class="appt-patient"><%= appt.patient_name %></div>
+                <div class="appt-phone"><%= appt.appointment_time %></div>
+              </div>
+              <span class="status-badge status-<%= appt.status %>"><%= appt.status %></span>
+              <a href="/appointments/<%= appt.id %>" class="appt-action">→</a>
+            </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+
+    <!-- Patient Dashboard -->
+    <% } else { %>
+      <div class="stats-grid">
+        <div class="stat-card stat-blue">
+          <div class="stat-card-icon"><i class="fas fa-calendar-alt"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.totalCount %></div>
+            <div class="stat-card-label">Total Appointments</div>
+          </div>
+        </div>
+        <div class="stat-card stat-green">
+          <div class="stat-card-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.upcomingCount %></div>
+            <div class="stat-card-label">Upcoming</div>
+          </div>
+        </div>
+        <div class="stat-card stat-purple">
+          <div class="stat-card-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-card-info">
+            <div class="stat-card-value"><%= data.completedCount %></div>
+            <div class="stat-card-label">Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-section">
+        <div class="dash-section-header">
+          <h2>My Recent Appointments</h2>
+          <a href="/appointments" class="view-all-link">View All</a>
+        </div>
+        <% if (data.myAppointments.length === 0) { %>
+          <div class="empty-state">
+            <i class="fas fa-calendar-plus"></i>
+            <p>No appointments yet</p>
+            <a href="/appointments/book" class="btn-primary-sm">Book Your First Appointment</a>
+          </div>
+        <% } else { %>
+          <div class="table-container">
+            <table class="data-table">
+              <thead><tr><th>Doctor</th><th>Department</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                <% data.myAppointments.forEach(appt => { %>
+                <tr>
+                  <td><strong><%= appt.doctor_name %></strong><br><small><%= appt.specialization %></small></td>
+                  <td><%= appt.department %></td>
+                  <td><%= appt.appointment_date %></td>
+                  <td><span class="time-badge"><%= appt.appointment_time %></span></td>
+                  <td><span class="status-badge status-<%= appt.status %>"><%= appt.status %></span></td>
+                  <td><a href="/appointments/<%= appt.id %>" class="table-action">View</a></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="dash-section">
+        <div class="dash-section-header"><h2>Find a Doctor</h2></div>
+        <div class="quick-links-grid">
+          <a href="/doctors?dept=1" class="quick-link-card">❤️ Cardiology</a>
+          <a href="/doctors?dept=2" class="quick-link-card">🧠 Neurology</a>
+          <a href="/doctors?dept=3" class="quick-link-card">🦴 Orthopedics</a>
+          <a href="/doctors?dept=7" class="quick-link-card">🩺 General Medicine</a>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,234 @@
+<%- include('../partials/header') %>
+
+<div class="book-page">
+  <div class="container">
+    <div class="book-header">
+      <h1><i class="fas fa-calendar-plus"></i> Book an Appointment</h1>
+      <p>Fill in the details below to schedule your consultation</p>
+    </div>
+
+    <% if (error && error.length > 0) { %>
+      <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> <%= error[0] %></div>
+    <% } %>
+
+    <div class="book-container">
+      <div class="book-form-section">
+        <form action="/appointments/book" method="POST" class="book-form" id="bookForm">
+          <div class="book-step">
+            <div class="step-header"><span class="step-num">1</span><h3>Select Doctor</h3></div>
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select class="form-input" id="deptSelect" onchange="filterDoctors()">
+                <option value="">All Departments</option>
+                <% departments.forEach(d => { %>
+                  <option value="<%= d.id %>"><%= d.icon %> <%= d.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Choose Doctor *</label>
+              <select class="form-input" name="doctor_id" id="doctorSelect" required onchange="onDoctorChange(this.value)">
+                <option value="">Select a doctor...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="book-step" id="dateStep" style="opacity:0.4;pointer-events:none">
+            <div class="step-header"><span class="step-num">2</span><h3>Choose Date & Time</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Appointment Date *</label>
+                <input type="date" name="appointment_date" id="apptDate" class="form-input"
+                  min="<%= new Date().toISOString().split('T')[0] %>" required
+                  onchange="loadTimeSlots()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time Slot *</label>
+                <div class="time-slots-container" id="timeSlotsContainer">
+                  <p class="slots-hint">Select a doctor and date first</p>
+                </div>
+                <input type="hidden" name="appointment_time" id="apptTime" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="book-step">
+            <div class="step-header"><span class="step-num">3</span><h3>Reason for Visit</h3></div>
+            <div class="form-group">
+              <label class="form-label">Chief Complaint / Reason</label>
+              <textarea name="reason" class="form-input form-textarea" rows="4" placeholder="Describe your symptoms or reason for appointment..."></textarea>
+            </div>
+          </div>
+
+          <div class="book-summary" id="bookSummary" style="display:none">
+            <h4><i class="fas fa-clipboard-check"></i> Appointment Summary</h4>
+            <div class="summary-grid">
+              <div class="summary-item"><span class="summary-label">Doctor</span><span id="summaryDoctor" class="summary-value">-</span></div>
+              <div class="summary-item"><span class="summary-label">Date</span><span id="summaryDate" class="summary-value">-</span></div>
+              <div class="summary-item"><span class="summary-label">Time</span><span id="summaryTime" class="summary-value">-</span></div>
+              <div class="summary-item"><span class="summary-label">Fee</span><span id="summaryFee" class="summary-value">-</span></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-book-confirm" id="submitBtn">
+            <i class="fas fa-calendar-check"></i> Confirm Appointment
+          </button>
+        </form>
+      </div>
+
+      <div class="book-info-section">
+        <div class="info-card">
+          <h4><i class="fas fa-info-circle"></i> Booking Information</h4>
+          <ul class="info-list">
+            <li><i class="fas fa-check"></i> Appointments are confirmed instantly</li>
+            <li><i class="fas fa-check"></i> You can cancel up to 2 hours before</li>
+            <li><i class="fas fa-check"></i> Bring your ID and insurance card</li>
+            <li><i class="fas fa-check"></i> Arrive 10 minutes early</li>
+          </ul>
+        </div>
+        <div class="info-card info-emergency">
+          <h4>🚨 Emergency?</h4>
+          <p>For medical emergencies, please call our helpline immediately</p>
+          <a href="tel:18001234567" class="emergency-call-btn">📞 1800-123-4567</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const doctorsByDept = {};
+const allDoctors = [];
+
+async function init() {
+  const res = await fetch('/doctors?_json=1');
+  // Fetch from our API endpoint
+  const response = await fetch('/api/doctors');
+  if (response.ok) {
+    const data = await response.json();
+    data.forEach(d => {
+      allDoctors.push(d);
+      if (!doctorsByDept[d.department_id]) doctorsByDept[d.department_id] = [];
+      doctorsByDept[d.department_id].push(d);
+    });
+    renderDoctors(allDoctors);
+  }
+  <% if (selectedDoctor) { %>
+    setTimeout(() => {
+      document.getElementById('doctorSelect').value = '<%= selectedDoctor.id %>';
+      onDoctorChange('<%= selectedDoctor.id %>');
+    }, 500);
+  <% } %>
+}
+
+function renderDoctors(doctors) {
+  const sel = document.getElementById('doctorSelect');
+  sel.innerHTML = '<option value="">Select a doctor...</option>';
+  doctors.forEach(d => {
+    sel.innerHTML += `<option value="${d.id}" data-fee="${d.consultation_fee}" data-name="${d.name}">${d.name} — ${d.specialization} (₹${d.consultation_fee})</option>`;
+  });
+}
+
+function filterDoctors() {
+  const dept = document.getElementById('deptSelect').value;
+  if (!dept) renderDoctors(allDoctors);
+  else renderDoctors(doctorsByDept[dept] || []);
+}
+
+function onDoctorChange(id) {
+  const step = document.getElementById('dateStep');
+  step.style.opacity = id ? '1' : '0.4';
+  step.style.pointerEvents = id ? 'auto' : 'none';
+  if (id) {
+    updateSummary();
+    loadTimeSlots();
+  }
+}
+
+async function loadTimeSlots() {
+  const doctorId = document.getElementById('doctorSelect').value;
+  const date = document.getElementById('apptDate').value;
+  if (!doctorId || !date) return;
+
+  const container = document.getElementById('timeSlotsContainer');
+  container.innerHTML = '<p class="slots-loading"><i class="fas fa-spinner fa-spin"></i> Loading slots...</p>';
+
+  try {
+    const res = await fetch(`/doctors/${doctorId}/slots?date=${date}`);
+    const data = await res.json();
+    container.innerHTML = '';
+    if (!data.slots || data.slots.length === 0) {
+      container.innerHTML = '<p class="slots-hint">No slots available for this date</p>';
+      return;
+    }
+    data.slots.forEach(slot => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `time-slot ${slot.booked ? 'booked' : 'available'}`;
+      btn.textContent = slot.time;
+      btn.disabled = slot.booked;
+      if (!slot.booked) {
+        btn.onclick = () => selectSlot(slot.time, btn);
+      }
+      container.appendChild(btn);
+    });
+  } catch(e) {
+    container.innerHTML = '<p class="slots-hint">Error loading slots</p>';
+  }
+}
+
+function selectSlot(time, btn) {
+  document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('apptTime').value = time;
+  document.getElementById('summaryTime').textContent = time;
+  updateSummary();
+}
+
+function updateSummary() {
+  const sel = document.getElementById('doctorSelect');
+  const opt = sel.options[sel.selectedIndex];
+  const date = document.getElementById('apptDate').value;
+
+  if (opt && opt.value) {
+    document.getElementById('bookSummary').style.display = 'block';
+    document.getElementById('summaryDoctor').textContent = opt.dataset.name || opt.text;
+    document.getElementById('summaryFee').textContent = '₹' + (opt.dataset.fee || '-');
+  }
+  if (date) document.getElementById('summaryDate').textContent = date;
+}
+
+// Fetch doctors from dedicated API
+fetch('/api/doctors')
+  .catch(() => null);
+
+// Simple inline init using server-rendered data
+window.onload = function() {
+  // Initialize by fetching doctors
+  fetchDoctors();
+  <% if (selectedDoctor) { %>
+    setTimeout(() => {
+      document.getElementById('doctorSelect').value = '<%= selectedDoctor.id %>';
+      document.getElementById('summaryDoctor').textContent = '<%= selectedDoctor.name %>';
+      document.getElementById('summaryFee').textContent = '₹<%= selectedDoctor.consultation_fee %>';
+      document.getElementById('bookSummary').style.display = 'block';
+      onDoctorChange('<%= selectedDoctor.id %>');
+    }, 300);
+  <% } %>
+};
+
+async function fetchDoctors() {
+  try {
+    const res = await fetch('/api/doctors');
+    const data = await res.json();
+    data.forEach(d => {
+      allDoctors.push(d);
+      if (!doctorsByDept[d.department_id]) doctorsByDept[d.department_id] = [];
+      doctorsByDept[d.department_id].push(d);
+    });
+    renderDoctors(allDoctors);
+  } catch(e) { console.log('Doctor fetch failed, using server-rendered data'); }
+}
+</script>
+
+<%- include('../partials/footer') %>
