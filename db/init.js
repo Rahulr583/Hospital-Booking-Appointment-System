@@ -3,6 +3,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 
 const DB_PATH = path.join(__dirname, 'hospital.db');
+console.log('INIT.JS PATH:', DB_PATH);
 
 const db = new sqlite3.Database(DB_PATH, (err) => {
   if (err) {
@@ -18,9 +19,7 @@ db.serialize(() => {
   // ENABLE FOREIGN KEYS
   db.run('PRAGMA foreign_keys = ON');
 
-  // =========================
-  // USERS TABLE
-  // =========================
+ 
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
