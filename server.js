@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 // Initialize DB
 require('./db/database');
+require('./db/init');
 
 // View engine
 app.set('view engine', 'ejs');
@@ -41,19 +42,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/doctors', require('./routes/doctors'));
 app.use('/appointments', require('./routes/appointments'));
 app.use('/api', require('./routes/api'));
 
-// 404
+
 app.use((req, res) => {
   res.status(404).render('404', { title: '404 - Page Not Found', user: req.session.user });
 });
 
-// Error handler
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).render('error', { title: 'Server Error', error: err.message, user: req.session.user });
