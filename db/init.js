@@ -109,9 +109,7 @@ db.serialize(() => {
     )
   `);
 
-  // =========================
-  // INSERT DEPARTMENTS
-  // =========================
+ 
   const departments = [
     ['Cardiology', 'Heart specialists', '❤️'],
     ['Neurology', 'Brain specialists', '🧠'],
@@ -133,9 +131,7 @@ db.serialize(() => {
 
   deptStmt.finalize();
 
-  // =========================
-  // INSERT ADMIN
-  // =========================
+ 
   const adminPassword = bcrypt.hashSync('admin123', 10);
 
   db.run(`
@@ -150,9 +146,6 @@ db.serialize(() => {
     'admin'
   ]);
 
-  // =========================
-  // INSERT PATIENT
-  // =========================
   const patientPassword = bcrypt.hashSync('patient123', 10);
 
   db.run(`
@@ -169,9 +162,7 @@ db.serialize(() => {
     'patient'
   ]);
 
-  // =========================
-  // SAMPLE DOCTORS
-  // =========================
+  
   const doctorPassword = bcrypt.hashSync('doctor123', 10);
 
   const sampleDoctors = [

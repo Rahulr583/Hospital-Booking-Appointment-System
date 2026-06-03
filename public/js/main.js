@@ -1,4 +1,4 @@
-// MediCare Hospital - Main JS
+
 
 document.addEventListener('DOMContentLoaded', function () {
 
